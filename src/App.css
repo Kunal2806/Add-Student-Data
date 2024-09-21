@@ -16,3 +16,7 @@ img {
 .table-border {
     border: 2px solid black;
 }
+
+.editAlert {
+    height: 45px;
+}
