@@ -1,10 +1,13 @@
 import { useState } from "react";
 
-function Addfnx() {
+function Addfnx(props: any) {
   const [studentName, setstudentName] = useState("");
   const [courseName, setCourseName] = useState("");
+  const [alert, setAlert] = useState(false);
+
   function saveText() {
     let data = { studentName, courseName };
+    setAlert(true);
     fetch("https://api.kunalgoswami-2806.workers.dev/add", {
       method: "POST",
       headers: {
@@ -12,13 +15,30 @@ function Addfnx() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
-    }).then((result) => {
-      console.log("result", result);
-      window.location.reload();
-    });
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok " + response.statusText);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        props.sendBackFunc(data);
+        setstudentName("");
+        setCourseName("");
+        setAlert(false);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
   }
   return (
     <>
+      {alert && (
+        <div className="alert alert-primary" role="alert">
+          Data ADDING...
+        </div>
+      )}
       <div className="navbar">
         <div className="dropdown">
           <button

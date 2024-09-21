@@ -3,11 +3,15 @@ export interface props {
   id: number;
   preCourseName: string;
   preStudentName: string;
+  sendBackFunc: any;
 }
 function Edit(props: props) {
   const [studentName, setstudentName] = useState(`${props.preStudentName}`);
   const [courseName, setCourseName] = useState(`${props.preCourseName}`);
+  const [alert, setAlert] = useState(false);
+
   function saveText() {
+    setAlert(true);
     let data = { studentName, courseName };
     fetch(`https://api.kunalgoswami-2806.workers.dev/update/${props.id}`, {
       method: "PUT",
@@ -16,13 +20,22 @@ function Edit(props: props) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
-    }).then((result) => {
-      console.log("result", result);
-      window.location.reload();
+    }).then(async () => {
+      const response = await fetch(
+        "https://api.kunalgoswami-2806.workers.dev/getdata"
+      );
+      const data = await response.json();
+      props.sendBackFunc(data);
+      setAlert(false);
     });
   }
   return (
     <>
+      {alert && (
+        <div className="alert alert-primary" role="alert">
+          EDIT Data...
+        </div>
+      )}
       <div className="dropdown">
         <button
           className="rounded handle"
